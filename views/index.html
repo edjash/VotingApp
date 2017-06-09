@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="<?=BASE_URL?>vendor/bootstrap/favicon.ico">
+
+    <title>Example voting application</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="<?=BASE_URL?>vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?=BASE_URL?>vendor/bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+    <link href="<?=BASE_URL?>vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+    <link href="<?=BASE_URL?>css/cover.css" rel="stylesheet">
+
+    <!-- Ed Shortt CSS -->
+    <link href="<?=BASE_URL?>css/example.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<div class="site-wrapper">
+
+    <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+            <div class="masthead clearfix">
+                <div class="inner">
+                    <nav>
+                        <ul class="nav masthead-nav">
+                            <?php if ($logged_in): ?>
+                            <li class="active"><a href="<?=BASE_URL?>?logout=1"?>Logout</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="inner cover">
+                <h1 class="cover-heading">General Election 2017</h1>
+                <p class="lead">
+                    <?php if (!$logged_in): ?>
+                    <a href="<?=BASE_URL?>#" class="btn btn-lg btn-default register-btn" data-toggle="modal"
+                       data-target="#register">Register</a>
+                    <a href="<?=BASE_URL?>#" class="btn btn-lg btn-default signin-btn" data-toggle="modal"
+                       data-target="#login">Sign In</a>
+                    <?php endif; ?>
+                    <?php if ($logged_in && !$user['vote']): ?>
+                    <a href="<?=BASE_URL?>#" class="btn btn-lg btn-default vote-btn" data-toggle="modal"
+                       data-target="#vote">Vote</a>
+                    <?php elseif($logged_in && $user['vote'] == 'abstained'): ?>
+                        <p class="lead">You have <strong>abstained</strong> from voting in this election.</p>
+                    <?php elseif($logged_in && $user['vote'] && $user['vote'] != 'abstained'): ?>
+                        <p class="lead">Your vote has been registered. You have voted for:</p>
+                         <p><strong><?=$user['candidate']['name']?></strong></p>  
+                         <img src="<?=$user['candidate']['image_url']?>" width=80>
+                         <p><?=$user['candidate']['party']?></p>
+                    <?php endif; ?>
+                </p>
+            </div>
+
+            <div class="mastfoot">
+                <div class="inner">
+                    <p></p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Registration Modal -->
+<div id="register" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Register to Vote</h4>
+                <hr class="colorgraph">
+            </div>
+            <div class="modal-body">
+                <form id="register_form" role="form" method="post" action="account/register">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <input type="text" name="first_name" id="first_name" class="form-control input-lg"
+                                       placeholder="First Name" tabindex="1" required>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <input type="text" name="last_name" id="last_name" class="form-control input-lg"
+                                       placeholder="Last Name" tabindex="2" required>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" id="email" class="form-control input-lg"
+                               placeholder="Email Address" tabindex="4" data-remote="account/validate" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <input type="password" name="password" id="password" class="form-control input-lg"
+                                       placeholder="Password" tabindex="5" required>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <input type="password" name="password_confirmation" id="password_confirmation"
+                                       class="form-control input-lg" placeholder="Confirm Password" tabindex="6"
+                                       data-match="#password" required>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer modal-footer-center">
+                        <input id="register_btn" type="submit" class="btn btn-default btn-ok" value="Register">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div id="login" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Sign-In</h4>
+                <hr class="colorgraph">
+            </div>
+            <div class="modal-body">
+                <form id="login_form" role="form" method="post" action="account/login">
+                    <div class="form-group error">
+                        An account with those details could not be found. 
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" id="login_email" class="form-control input-lg"
+                               placeholder="Email Address" tabindex="4" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" id="login_password" class="form-control input-lg"
+                               placeholder="Password" tabindex="4" required>
+                        <div class="help-block with-errors"></div>
+                    </div>
+                    <div class="modal-footer modal-footer-center">
+                        <input id="login_btn" type="submit" class="btn btn-default btn-ok" value="Submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Voting Modal -->
+    <div id="vote" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Place your Vote</h4>
+                    <hr class="colorgraph">
+                </div>
+
+                <div class="modal-body">
+                    <form id="vote_form" role="form" method="post" action="vote">
+                        <div class="row">
+                            <div class="form-group">
+                              <label>Select Constinuency:</label>
+                                <select id="constituencies" class="selectpicker show-tick" data-live-search="true">
+                                </select>
+
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                              <label>Select Candidate:</label>
+                                <select id="candidates" name="candidate_id" class="selectpicker show-tick" required>
+                                </select>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                        <div class="modal-footer modal-footer-center">
+                            <input id="vote_btn" type="submit" class="btn btn-default btn-ok" value="Vote">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- Bootsrap and 3rd party JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="<?=BASE_URL?>vendor/bootstrap/assets/js/vendor/jquery.min.js"><\/script>')</script>
+        <script src="<?=BASE_URL?>vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="<?=BASE_URL?>vendor/bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
+        <script src="<?=BASE_URL?>vendor/validator.js"></script>
+        <script src="<?=BASE_URL?>vendor/bootstrap-select/dist/js/bootstrap-select.min.js"></script>
+
+        <!-- Ed Shortt Javascript -->
+        <script type="text/javascript">
+            var constituencies = <?=json_encode($constituencies)?>;
+        </script>
+        <script src="<?=BASE_URL?>js/example.js"></script>
+</body>
+
+
+</html>
