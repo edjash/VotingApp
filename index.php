@@ -9,8 +9,8 @@ $config = array(
 	'base_url' => '/voting/',
 	'db_host'  => 'localhost',
 	'db_name'  => 'ed_voting_app',
-	'db_user'  => 'edvote',
-	'db_pass'  => 'U86f73OdwuPE7FlJ',
+	'db_user'  => 'ed',
+	'db_pass'  => 'edvote',
 );
 
 

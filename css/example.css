@@ -67,6 +67,16 @@ label {
   }
 }
 
+
+#vote_form label {
+	text-align:left;
+	float:left;
+}
+.bootstrap-select {
+	border: 1px solid #ccc !important;
+height:36px;
+
+}
     /* Credit to bootsnipp.com for the css for the color graph */
 .colorgraph {
   height: 5px;
