@@ -1,18 +1,9 @@
 <?php
-
-/**
- * An array of configration values, edit these.
- * @var array
- */
-$config = array(
-	'debug'	   => true,
-	'base_url' => '/voting/',
-	'db_host'  => 'localhost',
-	'db_name'  => 'ed_voting_app',
-	'db_user'  => 'ed',
-	'db_pass'  => 'edvote',
-);
-
+//Bring in the config file
+if (!is_file('./config.php')) {
+    die("Configuration file not found. See config.example.php");
+}
+require_once './config.php';
 
 //initialise session
 @session_start();
@@ -25,11 +16,11 @@ define('IS_DEBUG', $config['debug']);
 
 //supress errors if code is live
 if (IS_DEBUG) {
-	error_reporting(E_ALL);
-	ini_set('display_errors', 'on');
+    error_reporting(E_ALL);
+    ini_set('display_errors', 'on');
 } else {
-	error_reporting(0);
-	ini_set('display_errors', 'off');
+    error_reporting(0);
+    ini_set('display_errors', 'off');
 }
 
 //Include essential files
@@ -40,11 +31,12 @@ require BASE_DIR.'Model.php';
 require BASE_DIR.'Controller.php';
 
 //Set an exception handler
-function exception_handler($exception) {
-	if (!IS_DEBUG) {
-		die("An internal error occured.");
-	}
-  	echo "Uncaught exception: " , $exception->getMessage(), "\n";
+function exception_handler($exception)
+{
+    if (!IS_DEBUG) {
+        die("An internal error occured.");
+    }
+    echo "Uncaught exception: " , $exception->getMessage(), "\n";
 }
 set_exception_handler('exception_handler');
 
